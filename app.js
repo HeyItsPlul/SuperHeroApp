@@ -108,12 +108,15 @@ function addNavigation() {
 }
 
 async function loadAbout(id) {
+    let themeRetrive = localStorage.getItem('theme')
+    let themeResult = JSON.parse(themeRetrive)
     let about = await fetch(`https://www.superheroapi.com/api.php/114110998142105/${id}`)
     let response = await about.json()
     console.log(response)
     mainEventBody.classList.remove('mainEventBody')
+    mainEventBody.innerHTML = ''
 
-function loadElement(theme) {
+function loadElement(theme, response) {
     mainEventBody.innerHTML =`<div class="aboutBody">
     <button class=" ${theme} genericButton " onclick="reloadHeroPage()" style="position:absolute; left:120px; top:120px;"> X </button>
     <div class=" ${theme} characterBox " id="${response.id}">
@@ -130,11 +133,11 @@ function loadElement(theme) {
     </div>`
 }
     if (themeResult.dark == true) {
-        loadElement('themeDark')
+        loadElement('themeDark', response)
 }
 
     if (themeResult.dark == false || themeResult.dark == undefined || themeResult.dark == null) {
-        loadElement('')
+        loadElement('', response)
     }
 }
 
