@@ -2,20 +2,88 @@ let heroCount = 1
 const mainEventBody = document.getElementById('mainEventBody')
 const themeSwapper = document.getElementById('themeSwapper')
 const themeVar = localStorage.getItem("theme")
+const compareBtn = document.getElementById('compare')
+let searchInput = document.getElementById('search')
 
 
 window.addEventListener('load', (event) => {
     load20SuperHeroes()
 });
 
+compareBtn.addEventListener('click', function() {
+    console.log('compare')
+    loadCompareScene()
+})
+
 themeSwapper.addEventListener('click', function() {
     theme()
 })
 
+function loadCompareScene() {
+    mainEventBody.classList.remove('mainEventBody')
+    mainEventBody.innerHTML = `<div class="input" id="inputHero">
+    <input type="text" name="" id="search1" class="inputField">
+
+    <button class="inputSubmit"  onclick="compare1()">
+        <img src="./Assets/Search.png"  class="searchIcon">
+    </button>
+
+</div>        <div class="input" id="input">
+<input type="text" name="" id="search" class="inputField">
+
+<button class="inputSubmit"  onclick="compare2()">
+    <img src="./Assets/Search.png"  class="searchIcon">
+</button>
+
+</div>`
+
+}
+
+
+async function compare1() {
+    document.getElementById('inputHero').remove
+    console.log('removing1')
+    let themeRetrive = localStorage.getItem('theme')
+    let themeResult = JSON.parse(themeRetrive)
+    let search1 = document.getElementById('search1')
+    let search2 = document.getElementById('search2')
+
+ let result = await fetch(`https://www.superheroapi.com/api.php/114110998142105/search/${search1.value}`)
+ let response = await result.json()
+ console.log(response)
+
+ createHeroComopare(response)
+}
+
+function createHeroComopare(result) {
+    let themeRetrive = localStorage.getItem('theme')
+    let themeResult = JSON.parse(themeRetrive)
+
+    function createHeroTheme(theme) {
+        mainEventBody.innerHTML += `
+        <div class=" ${theme} characterBox" id="${result.id}">
+        <img src="${result.image.url}" alt="" class="characterImage">
+        <button class="${theme} goToBtn" onclick="loadAbout(${result.id})">${result.name}</button>
+        </div>`
+    }
+    
+    if (themeResult.dark == true) {
+        createHeroTheme('themeDark')
+        document.body.style.backgroundColor = 'black'
+        document.getElementById('input').classList.add('themeDark')
+        swap(1)}
+
+    if (themeResult.dark == false || themeResult.dark == undefined || themeResult.dark == null) {
+        createHeroTheme('')
+        document.body.style.backgroundColor = 'white'
+        document.getElementById('input').classList.remove('themeDark')
+        swap(0)
+    }
+}
 
 async function load20SuperHeroes() {
     let themeRetrive = localStorage.getItem('theme')
-let themeResult = JSON.parse(themeRetrive)
+    let themeResult = JSON.parse(themeRetrive)
     if (heroCount >= 731) {
         return
     }
@@ -143,7 +211,7 @@ function loadElement(theme, response) {
 
 function reloadHeroPage() {
     let themeRetrive = localStorage.getItem('theme')
-let themeResult = JSON.parse(themeRetrive)
+    let themeResult = JSON.parse(themeRetrive)
     heroCount -= 20
     mainEventBody.classList.add('mainEventBody')
     load20SuperHeroes()
@@ -151,8 +219,7 @@ let themeResult = JSON.parse(themeRetrive)
 
 async function searchHero() {
     let themeRetrive = localStorage.getItem('theme')
-let themeResult = JSON.parse(themeRetrive)
- let searchInput = document.getElementById('search')
+    let themeResult = JSON.parse(themeRetrive)
  
  let result = await fetch(`https://www.superheroapi.com/api.php/114110998142105/search/${searchInput.value}`)
  let response = await result.json()
@@ -228,9 +295,5 @@ function swap(value) {
 let themeResult = JSON.parse(themeRetrive)
     document.getElementById('themeSwapper').style.filter = `invert(${value})`
     document.getElementById('logo').style.filter = `invert(${value})`
-    document.getElementById('compare').style.filter = `invert(${value})`
-    document.getElementById('quiz').style.filter = `invert(${value})`
-    document.getElementById('match2').style.filter = `invert(${value})`
-    document.getElementById('randomHero').style.filter = `invert(${value})`
 }
 
